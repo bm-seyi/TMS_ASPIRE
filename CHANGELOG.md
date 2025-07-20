@@ -21,3 +21,25 @@ first development version
 - Changed `Build().Run()` to `Build().RunAsync()` in `AppHost.cs` for async operation
 - Added Redis password configuration check
 - Solution file to include new Tests project
+
+
+## 0.0.3
+### Added
+- Comprehensive Redis test suite including:
+  - Basic connectivity test with ping measurement
+  - Key-value set/get operations test
+  - Multiple connection handling test
+  - Concurrent access test with atomic increment verification
+  - Expired key handling test
+  - Invalid connection string test case
+- Helper method `RedisConnection()` to simplify test setup
+- Grpc.Core namespace import for additional functionality
+- GitHub Actions workflow (`mstest-integration`) for:
+  - Automated builds and tests on push/pull requests to master
+  - .NET 8.0 environment setup
+  - Solution restoration, building, and test execution
+
+### Fixed/Updated
+- Refactored existing Redis health test to use new helper method
+- Improved test assertions with more descriptive messages
+- Enhanced test coverage for various Redis scenarios
