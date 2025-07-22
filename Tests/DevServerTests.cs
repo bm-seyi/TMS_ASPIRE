@@ -16,7 +16,7 @@ namespace Tests
             var builder = await DistributedApplicationTestingBuilder
                 .CreateAsync<Projects.TMS_ASPIRE>();
 
-            builder.Configuration.AddJsonFile("appsettings.Test.json", optional: false, reloadOnChange: true);
+            builder.Configuration.AddJsonFile("appsettings.Test.json", optional: true, reloadOnChange: true);
 
             sqlPassword = builder.Configuration["DevServerPassword"]
                 ?? throw new ArgumentNullException(nameof(sqlPassword));

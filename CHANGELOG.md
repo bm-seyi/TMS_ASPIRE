@@ -62,3 +62,8 @@ first development version
 
 ### Removed
 - Removed unused `using` statements (`Microsoft.Extensions.Logging`, `Microsoft.Extensions.Hosting`, etc.) from `RedisTests.cs`
+
+
+## 0.0.5
+### Fixed/Updated
+- Changed `appsettings.Test.json` loading to be optional in `DevServerTests.cs` to prevent test failures when file doesn't exist
