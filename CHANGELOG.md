@@ -67,3 +67,24 @@ first development version
 ## 0.0.5
 ### Fixed/Updated
 - Changed `appsettings.Test.json` loading to be optional in `DevServerTests.cs` to prevent test failures when file doesn't exist
+
+
+## 0.0.6
+### Added
+- Added SQL Server container configuration with database support in DevServerTests
+- Added volume persistence for SQL Server container in tests
+- Added connection string builder with `Encrypt` and `TrustServerCertificate` options in DevServerTests
+
+### Updated/Fixed
+- Changed SQL Server container lifetime from `Persistent` to `Session` in AppHost configuration
+- Refactored DevServerTests:
+  - Removed appsettings.Test.json configuration loading
+  - Simplified SQL Server resource setup
+  - Made DistributedApplication field private
+  - Added 30-second delay before connection test
+  - Updated connection string handling
+- Cleaned up whitespace in AppHost.cs
+
+### Removed
+- Removed explicit password handling from DevServerTests
+- Removed unnecessary `DisposeAsync` call in connection test

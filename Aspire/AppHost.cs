@@ -25,14 +25,12 @@ IResourceBuilder<RedisResource> redis = builder.AddRedis("redis-signalr")
 
 IResourceBuilder<ParameterResource> password = builder.AddParameter("DevServerPassword", secret: true);
 IResourceBuilder<SqlServerServerResource> sqlServer = builder.AddSqlServer("DevServer", password, 1433)
-    .WithLifetime(ContainerLifetime.Persistent)
+    .WithLifetime(ContainerLifetime.Session)
     .WithImage("mssql/server", "2022-latest")
     .WithEnvironment("ACCEPT_EULA", "Y")
     .WithEnvironment("TZ", "Europe/London")
     .WithDataVolume("mssql_data");
     
-
-
 /*
 IResourceBuilder<ContainerResource> vault = builder.AddContainer("vault", "hashicorp/vault")
     .WithAnnotation(new ContainerImageAnnotation { Tag = "latest" })

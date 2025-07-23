@@ -1,14 +1,12 @@
 using Aspire.Hosting;
 using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
 
 namespace Tests
 {
     [TestClass]
     public class DevServerTests
     {
-        public DistributedApplication app = null!;
-        public string sqlPassword = null!;
+        private DistributedApplication app = null!;
 
         [TestInitialize]
         public async Task Setup()
@@ -16,30 +14,36 @@ namespace Tests
             var builder = await DistributedApplicationTestingBuilder
                 .CreateAsync<Projects.TMS_ASPIRE>();
 
-            builder.Configuration.AddJsonFile("appsettings.Test.json", optional: true, reloadOnChange: true);
-
-            sqlPassword = builder.Configuration["DevServerPassword"]
-                ?? throw new ArgumentNullException(nameof(sqlPassword));
+            builder.AddSqlServer(name: "sql", port: 1433)
+                .WithLifetime(ContainerLifetime.Session)
+                .WithImage("mssql/server", "2022-latest")
+                .WithEnvironment("ACCEPT_EULA", "Y")
+                .WithEnvironment("TZ", "Europe/London")
+                .WithDataVolume("test")
+                .AddDatabase("sqldb");
 
             app = await builder.BuildAsync();
+
             await app.StartAsync();
         }
 
         [TestMethod]
         public async Task DevServerResourceIsConnectable()
         {
-            string connectionString = await app.GetConnectionStringAsync("DevServer")
+            string connectionString = await app.GetConnectionStringAsync("sql")
                 ?? throw new ArgumentNullException(nameof(connectionString));
 
-            SqlConnectionStringBuilder sqlConnectionStringBuilder = new SqlConnectionStringBuilder(connectionString)
+            var stringBuilder = new SqlConnectionStringBuilder(connectionString)
             {
-                Password = sqlPassword
+                Encrypt = false,
+                TrustServerCertificate = true,
             };
 
-            SqlConnection connection = new SqlConnection(sqlConnectionStringBuilder.ConnectionString);
+            await Task.Delay(30000);
+
+            SqlConnection connection = new SqlConnection(stringBuilder.ConnectionString);
             await connection.OpenAsync();
             Assert.IsTrue(connection.State == System.Data.ConnectionState.Open, "DevServer connection should be open");
-            await connection.DisposeAsync();
         }
 
         [TestCleanup]
@@ -51,5 +55,6 @@ namespace Tests
                 await app.DisposeAsync();
             }
         }
+
     }
 }
