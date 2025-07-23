@@ -43,3 +43,48 @@ first development version
 - Refactored existing Redis health test to use new helper method
 - Improved test assertions with more descriptive messages
 - Enhanced test coverage for various Redis scenarios
+
+
+## 0.0.4
+### Added
+- Added SQL Server resource (`DevServer`) with persistent container lifetime and data volume in `AppHost.cs`
+- Added parameter `DevServerPassword` for SQL Server authentication in `AppHost.cs` and `appsettings.json`
+- Added environment variables for Redis and Hashicorp Vault passwords in GitHub workflow
+- Added `appsettings.Test.json` to `.gitignore`
+- Added new `DevServerTests` class with SQL Server connectivity tests
+  - Includes test initialization/cleanup with DistributedApplication builder
+  - Added connection validation test for SQL Server resource
+
+### Fixed/Updated
+- Updated GitHub workflow to use `ubuntu-latest` instead of `windows-latest` runner
+- Updated .NET version from 8.0 to 9.0 in GitHub workflow
+- Improved test configuration handling with `appsettings.Test.json` loading
+
+### Removed
+- Removed unused `using` statements (`Microsoft.Extensions.Logging`, `Microsoft.Extensions.Hosting`, etc.) from `RedisTests.cs`
+
+
+## 0.0.5
+### Fixed/Updated
+- Changed `appsettings.Test.json` loading to be optional in `DevServerTests.cs` to prevent test failures when file doesn't exist
+
+
+## 0.0.6
+### Added
+- Added SQL Server container configuration with database support in DevServerTests
+- Added volume persistence for SQL Server container in tests
+- Added connection string builder with `Encrypt` and `TrustServerCertificate` options in DevServerTests
+
+### Updated/Fixed
+- Changed SQL Server container lifetime from `Persistent` to `Session` in AppHost configuration
+- Refactored DevServerTests:
+  - Removed appsettings.Test.json configuration loading
+  - Simplified SQL Server resource setup
+  - Made DistributedApplication field private
+  - Added 30-second delay before connection test
+  - Updated connection string handling
+- Cleaned up whitespace in AppHost.cs
+
+### Removed
+- Removed explicit password handling from DevServerTests
+- Removed unnecessary `DisposeAsync` call in connection test

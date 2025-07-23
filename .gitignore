@@ -2,3 +2,4 @@ bin/
 obj/
 .env
 .vscode/
+appsettings.Test.json

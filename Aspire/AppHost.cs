@@ -2,6 +2,7 @@ using Aspire.Hosting;
 using Aspire.Hosting.Redis;
 using Microsoft.Extensions.Configuration;
 
+
 IDistributedApplicationBuilder builder = DistributedApplication.CreateBuilder(args);
 
 #if DEBUG
@@ -21,6 +22,15 @@ IResourceBuilder<RedisResource> redis = builder.AddRedis("redis-signalr")
     .WithBindMount("./resources/redis/redis.conf", "/usr/local/etc/redis/redis.conf")
     .WithArgs("/usr/local/etc/redis/redis.conf");
 
+
+IResourceBuilder<ParameterResource> password = builder.AddParameter("DevServerPassword", secret: true);
+IResourceBuilder<SqlServerServerResource> sqlServer = builder.AddSqlServer("DevServer", password, 1433)
+    .WithLifetime(ContainerLifetime.Session)
+    .WithImage("mssql/server", "2022-latest")
+    .WithEnvironment("ACCEPT_EULA", "Y")
+    .WithEnvironment("TZ", "Europe/London")
+    .WithDataVolume("mssql_data");
+    
 /*
 IResourceBuilder<ContainerResource> vault = builder.AddContainer("vault", "hashicorp/vault")
     .WithAnnotation(new ContainerImageAnnotation { Tag = "latest" })
