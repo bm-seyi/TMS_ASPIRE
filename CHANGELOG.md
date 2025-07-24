@@ -88,3 +88,19 @@ first development version
 ### Removed
 - Removed explicit password handling from DevServerTests
 - Removed unnecessary `DisposeAsync` call in connection test
+
+
+## 0.0.7
+### Added
+- Added test initialization and cleanup methods (`Setup` and `Cleanup`) in `RedisTests.cs` to manage `DistributedApplication` and Redis connection lifecycle
+- Added `Aspire.Hosting` namespace import in `RedisTests.cs` for testing infrastructure
+
+### Fixed/Updated
+- Refactored `RedisTests.cs` to use class-level fields and setup/cleanup methods instead of per-test connection creation
+- Removed redundant `RedisConnection()` helper method and replaced with centralized connection management
+- Updated all test methods to use the shared connection from the setup method
+- Improved resource cleanup with proper disposal of `DistributedApplication` and Redis connection in test teardown
+
+### Removed
+- Removed empty line in `AppHost.cs` for code cleanliness
+- Removed per-test Redis connection creation logic from all test methods

@@ -1,3 +1,4 @@
+using Aspire.Hosting;
 using StackExchange.Redis;
 
 
@@ -6,10 +7,28 @@ namespace Tests
     [TestClass]
     public class RedisTests
     {
+
+        private DistributedApplication app = null!;
+        private ConnectionMultiplexer connection = null!;
+
+        [TestInitialize]
+        public async Task Setup()
+        {
+            IDistributedApplicationTestingBuilder builder = await DistributedApplicationTestingBuilder
+                .CreateAsync<Projects.TMS_ASPIRE>();
+
+            app = await builder.BuildAsync();
+            await app.StartAsync();
+
+            string connectionString = await app.GetConnectionStringAsync("redis-signalr")
+                ?? throw new ArgumentNullException(nameof(connectionString));
+
+            connection = await ConnectionMultiplexer.ConnectAsync(connectionString);
+        }
+
         [TestMethod]
         public async Task RedisResourceIsHealthyAndConnectable()
         {
-            var (connection, app) = await RedisConnection();
             await using (app)
             {
                 IDatabase db = connection.GetDatabase();
@@ -22,8 +41,6 @@ namespace Tests
         [TestMethod]
         public async Task RedisResourceCanSetAndGet()
         {
-            var (connection, app) = await RedisConnection();
-
             await using (app)
             {
                 IDatabase db = connection.GetDatabase();
@@ -90,8 +107,6 @@ namespace Tests
         [TestMethod]
         public async Task RedisResourceNotRetrieveExpiredKeys()
         {
-
-            var (connection, app) = await RedisConnection();
             await using (app)
             {
                 IDatabase db = connection.GetDatabase();
@@ -111,10 +126,9 @@ namespace Tests
         [TestMethod]
         public async Task RedisResourceConcurrentAccess()
         {
-            var (redis, app) = await RedisConnection();
             await using (app)
             {
-                var db = redis.GetDatabase();
+                var db = connection.GetDatabase();
 
                 string testKey = "concurrent:test";
                 await db.KeyDeleteAsync(testKey);
@@ -169,21 +183,20 @@ namespace Tests
             }
         }
 
-
-        private async Task<(ConnectionMultiplexer connection, IAsyncDisposable app)> RedisConnection()
+        [TestCleanup]
+        public async Task Cleanup()
         {
-            var builder = await DistributedApplicationTestingBuilder
-                .CreateAsync<Projects.TMS_ASPIRE>();
+            if (app != null)
+            {
+                await app.StopAsync();
+                await app.DisposeAsync();
+            }
 
-            var app = await builder.BuildAsync();
-            await app.StartAsync();
-
-            string connectionString = await app.GetConnectionStringAsync("redis-signalr")
-                ?? throw new ArgumentNullException(nameof(connectionString));
-
-            ConnectionMultiplexer connection = await ConnectionMultiplexer.ConnectAsync(connectionString);
-
-            return (connection, app);
+            if (connection != null && connection.IsConnected)
+            {
+                await connection.CloseAsync();
+                await connection.DisposeAsync();
+            }
         }
     }
 }
