@@ -2,7 +2,6 @@ using Aspire.Hosting;
 using Aspire.Hosting.Redis;
 using Microsoft.Extensions.Configuration;
 
-
 IDistributedApplicationBuilder builder = DistributedApplication.CreateBuilder(args);
 
 #if DEBUG
