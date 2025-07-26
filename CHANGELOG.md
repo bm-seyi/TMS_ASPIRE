@@ -104,3 +104,16 @@ first development version
 ### Removed
 - Removed empty line in `AppHost.cs` for code cleanliness
 - Removed per-test Redis connection creation logic from all test methods
+
+
+## 0.0.8
+### Fixed/Updated
+- Improved error handling by replacing `ArgumentNullException` with more descriptive `InvalidOperationException` messages throughout the codebase
+- Simplified Redis and SQL Server resource creation by removing unnecessary variable assignments (`IResourceBuilder<T>`)
+- Cleaned up and removed commented-out Vault container configuration code
+- Updated Redis tests to use more descriptive variable names (`redisConnection` instead of `connection`)
+- Fixed variable naming consistency in tests (`app` → `application` where appropriate)
+
+### Removed
+- Removed unused `vaultToken` configuration and related Vault container setup
+- Removed redundant variable assignments for Redis and SQL Server resources
