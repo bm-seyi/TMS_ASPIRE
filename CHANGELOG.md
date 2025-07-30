@@ -117,3 +117,21 @@ first development version
 ### Removed
 - Removed unused `vaultToken` configuration and related Vault container setup
 - Removed redundant variable assignments for Redis and SQL Server resources
+
+
+## 0.0.9
+### Added
+- Added `Aspire.Hosting.Keycloak` package (version `9.4.0-preview.1.25378.8`) to project.
+- Introduced `Microsoft.Extensions.Hosting` package (version `9.0.7`) to project dependencies.
+- Declared a Redis password as a secure parameter using `builder.AddParameter("redisPassword", secret: true)`.
+- Updated Redis resource to accept the secure Redis password and set container lifetime to session.
+
+### Fixed/Updated
+- Updated `Aspire.Hosting.AppHost` from version `9.3.0` to `9.4.0`.
+- Updated `Aspire.Hosting.SqlServer` from version `9.3.1` to `9.4.0`.
+- Upgraded `Microsoft.Extensions.Configuration.Json` from `9.0.6` to `9.0.7`.
+- Changed exception type in `DevServerTests` when SQL connection string is missing, from `ArgumentNullException` to `InvalidOperationException`.
+
+### Removed
+- Removed `DotNetEnv` package (version `3.1.1`) and associated `#if DEBUG` block for loading `.env` file.
+- Eliminated hardcoded Redis password retrieval from configuration.

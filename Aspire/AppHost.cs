@@ -4,24 +4,19 @@ using Microsoft.Extensions.Configuration;
 
 IDistributedApplicationBuilder builder = DistributedApplication.CreateBuilder(args);
 
-#if DEBUG
-    string parentDirectory = Directory.GetParent(Environment.CurrentDirectory)?.FullName ?? throw new InvalidOperationException("Unable to retrieve Parent Directory Path");
-    DotNetEnv.Env.Load(Path.Combine(parentDirectory, ".env"));
-#endif
-
 builder.Configuration.AddJsonFile("appsettings.json").AddEnvironmentVariables();
 
-string redisPassword = builder.Configuration["Redis:Password"] ?? throw new InvalidOperationException("Redis Password could not be retrieved");
 
-builder.AddRedis("redis-signalr")
+IResourceBuilder<ParameterResource> redisPassword = builder.AddParameter("redisPassword", secret: true);
+
+builder.AddRedis("redis-signalr", port: 0, redisPassword)
+    .WithLifetime(ContainerLifetime.Session)
     .WithImage("redis", "alpine3.21")
-    .WithEnvironment("REDIS_PWD", redisPassword)
-    .WithArgs("--requirepass", redisPassword, "--masterauth", redisPassword)
     .WithBindMount("./resources/redis/redis.conf", "/usr/local/etc/redis/redis.conf")
     .WithArgs("/usr/local/etc/redis/redis.conf");
 
 
-IResourceBuilder<ParameterResource> password = builder.AddParameter("DevServerPassword", secret: true);
+IResourceBuilder<ParameterResource> password = builder.AddParameter("sql-password", secret: true);
 
 builder.AddSqlServer("DevServer", password, 1433)
     .WithLifetime(ContainerLifetime.Session)
