@@ -135,3 +135,17 @@ first development version
 ### Removed
 - Removed `DotNetEnv` package (version `3.1.1`) and associated `#if DEBUG` block for loading `.env` file.
 - Eliminated hardcoded Redis password retrieval from configuration.
+
+
+## 0.0.10
+### Added
+- Introduced `Parameter__RedisPassword` and `Parameter__DevServerPassword` environment variables in GitHub Actions workflow.
+- Integrated `AddUserSecrets<Program>` into configuration loading in `AppHost.cs`.
+
+### Fixed/Updated
+- Updated Redis and SQL Server configuration to use named parameters (`redisPassword`, `DevServerPassword`) instead of unnamed or differently named ones.
+- Replaced `.AddParameter("sql-password", ...)` with `.AddParameter("DevServerPassword", ...)` to match usage.
+
+### Removed
+- Removed unused `Redis__Password`, `Hashicorp__Vault__Password`, and `DevServerPassword` environment variables from GitHub Actions.
+- Removed `Redis:Password` from `appsettings.json`.
