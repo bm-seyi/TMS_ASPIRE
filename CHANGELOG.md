@@ -149,3 +149,10 @@ first development version
 ### Removed
 - Removed unused `Redis__Password`, `Hashicorp__Vault__Password`, and `DevServerPassword` environment variables from GitHub Actions.
 - Removed `Redis:Password` from `appsettings.json`.
+
+
+## 0.0.11
+### Fixed/Updated
+- Corrected environment variable names in the GitHub Actions workflow:
+  - `Parameter__RedisPassword` → `Parameters__RedisPassword`
+  - `Parameter__DevServerPassword` → `Parameters__DevServerPassword`
