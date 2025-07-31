@@ -31,7 +31,7 @@ namespace Tests
         public async Task DevServerResourceIsConnectable()
         {
             string connectionString = await app.GetConnectionStringAsync("sql")
-                ?? throw new ArgumentNullException(nameof(connectionString));
+                ?? throw new InvalidOperationException("Unable to retrieve connection string for SQL Server");
 
             var stringBuilder = new SqlConnectionStringBuilder(connectionString)
             {

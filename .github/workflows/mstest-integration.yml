@@ -16,10 +16,8 @@ jobs:
         name: mstest-integration
         runs-on: ubuntu-latest
         env:
-            Redis__Password: "testpassword"
-            Hashicorp__Vault__Password: "testpassword"
-            DevServerPassword: "testpassword"
-            Parameter__DevServerPassword: "testpassword"
+            Parameters__RedisPassword: "testpassword"
+            Parameters__DevServerPassword: "testpassword"
 
         steps:
             - name: Checkout Repository
