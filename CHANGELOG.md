@@ -156,3 +156,22 @@ first development version
 - Corrected environment variable names in the GitHub Actions workflow:
   - `Parameter__RedisPassword` → `Parameters__RedisPassword`
   - `Parameter__DevServerPassword` → `Parameters__DevServerPassword`
+
+
+## 0.0.12
+### Added
+- Keycloak integration with SQL Server database
+- HTTPS configuration for Keycloak with certificate bindings
+- Keycloak realm import functionality
+- New environment variables for Keycloak (`Parameters__KeycloakPassword`, `Parameters__KeycloakUsername`)
+- Certificate generation step in GitHub workflow
+- Added `*.pem` to `.gitignore`
+
+### Fixed/Updated
+- Corrected formatting in `.gitignore` (newline at EOF)
+- Updated SQL Server container configuration to support Keycloak dependency
+- Added container dependency ordering (Keycloak waits for SQL Server)
+- Removed unused namespace references
+
+### Removed
+- Unused `Aspire.Hosting` and `Aspire.Hosting.Redis` using statements

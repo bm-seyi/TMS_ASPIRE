@@ -18,6 +18,8 @@ jobs:
         env:
             Parameters__RedisPassword: "testpassword"
             Parameters__DevServerPassword: "testpassword"
+            Parameters__KeycloakPassword: "testpassword"
+            Parameters__KeycloakUsername: "testusername"
 
         steps:
             - name: Checkout Repository
@@ -27,6 +29,11 @@ jobs:
               uses: actions/setup-dotnet@v3
               with:
                 dotnet-version: 9.0
+            
+            - name: Create Keycloak certs directory
+              run: |
+                mkdir -p ./resources/keycloak/certs
+                openssl req -newkey rsa:2048 -nodes -keyout ./resources/keycloak/certs/localhost-key.pem -x509 -days 365 -out ./resources/keycloak/certs/localhost.pem -subj "/CN=localhost"
 
             - name: Restore Dependencies
               run: dotnet restore
