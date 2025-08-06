@@ -175,3 +175,15 @@ first development version
 
 ### Removed
 - Unused `Aspire.Hosting` and `Aspire.Hosting.Redis` using statements
+
+
+## 0.0.13
+### Fixed/Updated
+- Refactored Redis test methods to use consistent `await using (app)` pattern
+- Simplified test setup by removing redundant application builder code
+- Improved test isolation by properly scoping Redis connections
+- Maintained all existing test assertions and functionality
+
+### Removed
+- Removed duplicate application startup code from each test method
+- Eliminated redundant `DistributedApplicationTestingBuilder` instantiation

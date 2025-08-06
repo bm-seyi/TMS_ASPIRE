@@ -58,47 +58,40 @@ namespace Tests
         [TestMethod]
         public async Task RedisResourceMultipleConnections()
         {
-            var builder = await DistributedApplicationTestingBuilder
-                .CreateAsync<Projects.TMS_ASPIRE>();
+            await using (app)
+            { 
+                string connectionString = await app.GetConnectionStringAsync("redis-signalr") ?? throw new InvalidOperationException("Redis connection string could not be retrieved.");
+                for (int i = 0; i < 30; i++)
+                {
+                    ConnectionMultiplexer redisConnection = await ConnectionMultiplexer.ConnectAsync(connectionString);
 
-            await using var application = await builder.BuildAsync();
-            await application.StartAsync();
-
-            // Act
-            string connectionString = await app.GetConnectionStringAsync("redis-signalr") ?? throw new InvalidOperationException("Redis connection string could not be retrieved.");
-            for (int i = 0; i < 30; i++)
-            {
-                ConnectionMultiplexer redisConnection = await ConnectionMultiplexer.ConnectAsync(connectionString);
-                Assert.IsNotNull(redisConnection, $"Connection {i + 1} should not be null");
-                Assert.IsTrue(redisConnection.IsConnected, $"Connection {i + 1} should be connected");
-            }
+                    Assert.IsNotNull(redisConnection, $"Connection {i + 1} should not be null");
+                    Assert.IsTrue(redisConnection.IsConnected, $"Connection {i + 1} should be connected");
+                }
+            }            
         }
 
         [TestMethod]
         public async Task RedisResourceCanSetAndGetWithMultipleConnections()
         {
-            var builder = await DistributedApplicationTestingBuilder
-                .CreateAsync<Projects.TMS_ASPIRE>();
-
-            await using var application = await builder.BuildAsync();
-            await application.StartAsync();
-
-            // Act
-            string connectionString = await app.GetConnectionStringAsync("redis-signalr")  ?? throw new InvalidOperationException("Redis connection string could not be retrieved.");
-
-            for (int i = 0; i < 30; i++)
+            await using (app)
             {
-                ConnectionMultiplexer redisConnection = await ConnectionMultiplexer.ConnectAsync(connectionString);
-                IDatabase db = redisConnection.GetDatabase();
+                string connectionString = await app.GetConnectionStringAsync("redis-signalr")  ?? throw new InvalidOperationException("Redis connection string could not be retrieved.");
 
-                string key = $"test-key-{i}";
-                string value = $"test-value-{i}";
+                for (int i = 0; i < 30; i++)
+                {
+                    ConnectionMultiplexer redisConnection = await ConnectionMultiplexer.ConnectAsync(connectionString);
+                    IDatabase db = redisConnection.GetDatabase();
 
-                bool setResult = await db.StringSetAsync(key, value);
-                string? retrievedValue = await db.StringGetAsync(key);
+                    string key = $"test-key-{i}";
+                    string value = $"test-value-{i}";
 
-                Assert.IsTrue(setResult, $"Failed to set value in Redis for connection {i + 1}");
-                Assert.AreEqual(value, retrievedValue, $"Retrieved value does not match the set value for connection {i + 1}");
+                    bool setResult = await db.StringSetAsync(key, value);
+                    string? retrievedValue = await db.StringGetAsync(key);
+
+                    Assert.IsTrue(setResult, $"Failed to set value in Redis for connection {i + 1}");
+                    Assert.AreEqual(value, retrievedValue, $"Retrieved value does not match the set value for connection {i + 1}");
+                }
             }
         }
 
@@ -161,23 +154,19 @@ namespace Tests
         [TestMethod]
         public async Task RedisResourceInvalidConnectionString()
         {
-
-            var builder = await DistributedApplicationTestingBuilder
-                .CreateAsync<Projects.TMS_ASPIRE>();
-
-            await using var application = await builder.BuildAsync();
-            await application.StartAsync();
-
-            string invalidConnectionString = "invalid-connection-string";
-
-            try
+            await using (app)
             {
-                await ConnectionMultiplexer.ConnectAsync(invalidConnectionString);
-                Assert.Fail("Expected exception for invalid connection string");
-            }
-            catch (RedisConnectionException ex)
-            {
-                Assert.IsTrue(ex.Message.Contains("It was not possible to connect to the redis server(s)"), "Expected connection error for invalid connection string");
+                string invalidConnectionString = "invalid-connection-string";
+
+                try
+                {
+                    await ConnectionMultiplexer.ConnectAsync(invalidConnectionString);
+                    Assert.Fail("Expected exception for invalid connection string");
+                }
+                catch (RedisConnectionException ex)
+                {
+                    Assert.IsTrue(ex.Message.Contains("It was not possible to connect to the redis server(s)"), "Expected connection error for invalid connection string");
+                }
             }
         }
 
