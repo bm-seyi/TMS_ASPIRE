@@ -156,3 +156,34 @@ first development version
 - Corrected environment variable names in the GitHub Actions workflow:
   - `Parameter__RedisPassword` → `Parameters__RedisPassword`
   - `Parameter__DevServerPassword` → `Parameters__DevServerPassword`
+
+
+## 0.0.12
+### Added
+- Keycloak integration with SQL Server database
+- HTTPS configuration for Keycloak with certificate bindings
+- Keycloak realm import functionality
+- New environment variables for Keycloak (`Parameters__KeycloakPassword`, `Parameters__KeycloakUsername`)
+- Certificate generation step in GitHub workflow
+- Added `*.pem` to `.gitignore`
+
+### Fixed/Updated
+- Corrected formatting in `.gitignore` (newline at EOF)
+- Updated SQL Server container configuration to support Keycloak dependency
+- Added container dependency ordering (Keycloak waits for SQL Server)
+- Removed unused namespace references
+
+### Removed
+- Unused `Aspire.Hosting` and `Aspire.Hosting.Redis` using statements
+
+
+## 0.0.13
+### Fixed/Updated
+- Refactored Redis test methods to use consistent `await using (app)` pattern
+- Simplified test setup by removing redundant application builder code
+- Improved test isolation by properly scoping Redis connections
+- Maintained all existing test assertions and functionality
+
+### Removed
+- Removed duplicate application startup code from each test method
+- Eliminated redundant `DistributedApplicationTestingBuilder` instantiation
