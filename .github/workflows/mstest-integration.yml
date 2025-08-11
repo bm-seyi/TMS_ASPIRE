@@ -16,17 +16,18 @@ jobs:
         name: mstest-integration
         runs-on: ubuntu-latest
         env:
-            Parameters__RedisPassword: "testpassword"
-            Parameters__DevServerPassword: "testpassword"
-            Parameters__KeycloakPassword: "testpassword"
-            Parameters__KeycloakUsername: "testusername"
+            Parameters__RedisPassword: "testPassword"
+            Parameters__DevServerPassword: "testPassword"
+            Parameters__KeycloakPassword: "testPassword"
+            Parameters__KeycloakUsername: "testUsername"
+            Parameters__HashicorpVaultToken: "testToken"
 
         steps:
             - name: Checkout Repository
               uses: actions/checkout@v3
             
             - name: Setup .NET
-              uses: actions/setup-dotnet@v3
+              uses: actions/setup-dotnet@v4
               with:
                 dotnet-version: 9.0
             
