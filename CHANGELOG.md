@@ -187,3 +187,14 @@ first development version
 ### Removed
 - Removed duplicate application startup code from each test method
 - Eliminated redundant `DistributedApplicationTestingBuilder` instantiation
+
+
+## 0.0.14
+### Added
+- Added Hashicorp Vault container support with token authentication in AppHost.cs
+- Added new environment variable `Parameters__HashicorpVaultToken` in mstest-integration.yml workflow
+
+### Updated/Fixed
+- Updated .NET setup action from v3 to v4 in mstest-integration.yml
+- Updated Redis bind mount to include read-only flag in AppHost.cs
+- Updated test credentials (passwords and username) to use consistent capitalization in mstest-integration.yml

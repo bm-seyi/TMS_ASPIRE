@@ -9,7 +9,7 @@ IResourceBuilder<ParameterResource> redisPassword = builder.AddParameter("redisP
 builder.AddRedis("redis-signalr", password: redisPassword)
     .WithLifetime(ContainerLifetime.Session)
     .WithImage("redis", "alpine3.21")
-    .WithBindMount("./resources/redis/redis.conf", "/usr/local/etc/redis/redis.conf")
+    .WithBindMount("./resources/redis/redis.conf", "/usr/local/etc/redis/redis.conf", true)
     .WithArgs("/usr/local/etc/redis/redis.conf");
 
 
@@ -55,5 +55,17 @@ builder.AddKeycloak("tms-keycloak", port: 8443, keycloakUsername, keycloakPasswo
     .WithBindMount("./resources/keycloak/certs", "/opt/keycloak/certs", true)
     .WithBindMount("./resources/keycloak/maui_realm.json", "/opt/keycloak/data/import/maui_realm.json", true)
     .WithArgs("start-dev --import-realm");
+
+
+IResourceBuilder<ParameterResource> vaultToken = builder.AddParameter("HashicorpVaultToken", secret: true);
+
+builder.AddContainer("tms-vault", "hashicorp/vault", "latest")
+    .WithLifetime(ContainerLifetime.Session)
+    .WithHttpEndpoint(8200, 8200)
+    .WithBindMount("./resources/hashicorp/entrypoint.sh", "/usr/local/bin/entrypoint.sh")
+    .WithEnvironment("VAULT_ADDR", "http://0.0.0.0:8200")
+    .WithEnvironment("VAULT_DEV_ROOT_TOKEN_ID", vaultToken)
+    .WithEntrypoint("/bin/sh")
+    .WithArgs("/usr/local/bin/entrypoint.sh");
 
 await builder.Build().RunAsync();
